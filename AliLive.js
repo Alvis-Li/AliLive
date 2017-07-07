@@ -15,6 +15,7 @@ const config = {
   SignatureMethod: 'HMAC-SHA1',
   AccessKeySecret: '',
   SignatureVersion: '1.0',
+  PrivateKey: ''
 };
 
 /**
@@ -86,5 +87,17 @@ module.exports = {
       method: config.Method,
       dataType: config.DataType,
     }, callback);
+  },
+  authKey: function(URI) { //URL鉴权计算逻辑
+    URI = url.parse(URI).pathname;
+    let Timestamp = moment().add(600, 's').unix();
+    let rand = 0;
+    let uid = 0;
+    let PrivateKey = config.PrivateKey; //(即开通鉴权功能时填写的鉴权KEY)
+    let sstring = URI + '-' + Timestamp + '-' + rand + '-' + uid + '-' + PrivateKey;
+    let HashValue = md5(sstring)
+    return {
+      auto_key: HashValue
+    };
   }
 };
